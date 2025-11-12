@@ -99,6 +99,31 @@ body.dark-theme .feature-controls {
     background: var(--secondary-color);
 }
 
+body.dark-theme .control-label {
+    color: #5dade2;
+}
+
+body.dark-theme .checkbox-label span {
+    color: var(--text-dark);
+}
+
+body.dark-theme tbody tr.highlighted-top3 {
+    background-color: #1a4d2e;
+}
+
+body.dark-theme tbody tr.highlighted-winrate {
+    background-color: #1e3a5f;
+}
+
+body.dark-theme tbody tr.pinned-row {
+    background-color: #3d3d1f;
+    border-color: var(--warning-color);
+}
+
+body.dark-theme .comparison-player h3 {
+    color: #5dade2;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);

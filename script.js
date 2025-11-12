@@ -301,6 +301,15 @@ function toggleColumnVisibility(columnClass, show) {
     });
 }
 
+// Get chart colors based on theme
+function getChartColors() {
+    const isDark = document.body.classList.contains('dark-theme');
+    return {
+        text: isDark ? '#eaeaea' : '#2c3e50',
+        grid: isDark ? '#2a2a3e' : '#bdc3c7'
+    };
+}
+
 // Create charts
 function createCharts() {
     createWinRateChart();
@@ -312,6 +321,7 @@ function createCharts() {
 function createWinRateChart() {
     const ctx = document.getElementById('winRateChart').getContext('2d');
     const top10 = [...playersData].sort((a, b) => b.win_rate - a.win_rate).slice(0, 10);
+    const colors = getChartColors();
 
     if (charts.winRateChart) charts.winRateChart.destroy();
 
@@ -348,13 +358,24 @@ function createWinRateChart() {
                     max: 100,
                     title: {
                         display: true,
-                        text: 'Win Rate (%)'
+                        text: 'Win Rate (%)',
+                        color: colors.text
+                    },
+                    ticks: {
+                        color: colors.text
+                    },
+                    grid: {
+                        color: colors.grid
                     }
                 },
                 x: {
                     ticks: {
                         maxRotation: 45,
-                        minRotation: 45
+                        minRotation: 45,
+                        color: colors.text
+                    },
+                    grid: {
+                        color: colors.grid
                     }
                 }
             }
@@ -365,6 +386,7 @@ function createWinRateChart() {
 // Rating Distribution Chart
 function createRatingDistributionChart() {
     const ctx = document.getElementById('ratingDistChart').getContext('2d');
+    const colors = getChartColors();
 
     // Create rating bins
     const bins = [
@@ -415,17 +437,29 @@ function createRatingDistributionChart() {
                 y: {
                     beginAtZero: true,
                     ticks: {
-                        stepSize: 1
+                        stepSize: 1,
+                        color: colors.text
                     },
                     title: {
                         display: true,
-                        text: 'Number of Players'
+                        text: 'Number of Players',
+                        color: colors.text
+                    },
+                    grid: {
+                        color: colors.grid
                     }
                 },
                 x: {
                     title: {
                         display: true,
-                        text: 'Rating Range (μ)'
+                        text: 'Rating Range (μ)',
+                        color: colors.text
+                    },
+                    ticks: {
+                        color: colors.text
+                    },
+                    grid: {
+                        color: colors.grid
                     }
                 }
             }
@@ -437,6 +471,7 @@ function createRatingDistributionChart() {
 function createGameStatsChart() {
     const ctx = document.getElementById('gameStatsChart').getContext('2d');
     const top15 = playersData.slice(0, 15);
+    const colors = getChartColors();
 
     if (charts.gameStatsChart) charts.gameStatsChart.destroy();
 
@@ -474,7 +509,10 @@ function createGameStatsChart() {
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top'
+                    position: 'top',
+                    labels: {
+                        color: colors.text
+                    }
                 },
                 tooltip: {
                     mode: 'index',
@@ -486,7 +524,11 @@ function createGameStatsChart() {
                     stacked: false,
                     ticks: {
                         maxRotation: 45,
-                        minRotation: 45
+                        minRotation: 45,
+                        color: colors.text
+                    },
+                    grid: {
+                        color: colors.grid
                     }
                 },
                 y: {
@@ -494,7 +536,14 @@ function createGameStatsChart() {
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Number of Games'
+                        text: 'Number of Games',
+                        color: colors.text
+                    },
+                    ticks: {
+                        color: colors.text
+                    },
+                    grid: {
+                        color: colors.grid
                     }
                 }
             }
@@ -696,16 +745,24 @@ function applySorting() {
 }
 
 // Modal functionality
-const modal = document.getElementById('playerModal');
-const closeBtn = document.getElementsByClassName('close')[0];
+const playerModal = document.getElementById('playerModal');
+const comparisonModal = document.getElementById('comparisonModal');
+const closeBtns = document.getElementsByClassName('close');
 
-closeBtn.onclick = function() {
-    modal.style.display = 'none';
-}
+// Add click handlers to all close buttons
+Array.from(closeBtns).forEach(btn => {
+    btn.onclick = function() {
+        const modal = btn.closest('.modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    };
+});
 
+// Close modals when clicking outside
 window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = 'none';
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
     }
 }
 
@@ -928,6 +985,9 @@ function toggleTheme() {
         themeIcon.textContent = '🌙';
         localStorage.setItem('theme', 'light');
     }
+
+    // Recreate charts with new colors
+    createCharts();
 }
 
 // Load theme preference
