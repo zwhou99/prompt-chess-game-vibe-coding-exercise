@@ -11,8 +11,16 @@
 <body>
     <header>
         <div class="container">
-            <h1>Chess Tournament Results</h1>
-            <p class="subtitle">AI Prompt Engineering Competition</p>
+            <div class="header-content">
+                <div class="header-text">
+                    <h1>Chess Tournament Results</h1>
+                    <p class="subtitle">AI Prompt Engineering Competition</p>
+                </div>
+                <button id="themeToggle" class="theme-toggle-btn">
+                    <span class="btn-icon">🌙</span>
+                    <span id="themeText">Dark Mode</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -69,9 +77,6 @@
                 </button>
                 <button id="exportBtn" class="action-btn">
                     <span class="btn-icon">📥</span> Export Data
-                </button>
-                <button id="themeToggle" class="action-btn">
-                    <span class="btn-icon">🌙</span> <span id="themeText">Dark Mode</span>
                 </button>
             </div>
             <div class="feature-controls">

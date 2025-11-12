@@ -56,6 +56,49 @@ body.dark-theme table thead {
     background: var(--secondary-color);
 }
 
+body.dark-theme .stat-value {
+    color: #5dade2;
+}
+
+body.dark-theme .leaderboard-section h2,
+body.dark-theme .chart-container h2 {
+    color: #5dade2;
+}
+
+body.dark-theme table tbody {
+    background: var(--card-bg);
+}
+
+body.dark-theme table tbody tr {
+    border-bottom-color: var(--border-color);
+}
+
+body.dark-theme tbody tr:hover {
+    background-color: var(--hover-color);
+}
+
+body.dark-theme .player-name {
+    color: #5dade2;
+}
+
+body.dark-theme .rank-badge {
+    color: #eaeaea;
+}
+
+body.dark-theme .modal-content {
+    background: var(--card-bg);
+    color: var(--text-dark);
+}
+
+body.dark-theme .prompt-text {
+    background: var(--secondary-color);
+    color: var(--text-dark);
+}
+
+body.dark-theme .feature-controls {
+    background: var(--secondary-color);
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--bg-color);
@@ -77,6 +120,17 @@ header {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.header-text {
+    flex: 1;
+}
+
 header h1 {
     font-size: 2.5rem;
     margin-bottom: 0.5rem;
@@ -85,6 +139,32 @@ header h1 {
 .subtitle {
     font-size: 1.1rem;
     opacity: 0.9;
+}
+
+.theme-toggle-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(10px);
+    white-space: nowrap;
+}
+
+.theme-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.theme-toggle-btn .btn-icon {
+    font-size: 1.3rem;
 }
 
 /* Main Content */
@@ -700,6 +780,17 @@ footer {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .theme-toggle-btn {
+        align-self: stretch;
+        justify-content: center;
+    }
+
     header h1 {
         font-size: 1.8rem;
     }
