@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Tournament Results</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Chess Tournament Results</h1>
+            <p class="subtitle">AI Prompt Engineering Competition</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Statistics Overview -->
+        <section class="stats-overview">
+            <div class="stat-card">
+                <h3>Total Players</h3>
+                <p class="stat-value" id="totalPlayers">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Games</h3>
+                <p class="stat-value" id="totalGames">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>Average Win Rate</h3>
+                <p class="stat-value" id="avgWinRate">-</p>
+            </div>
+            <div class="stat-card">
+                <h3>Top Rating</h3>
+                <p class="stat-value" id="topRating">-</p>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <h2>Top 10 Players by Win Rate</h2>
+                <canvas id="winRateChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Rating Distribution</h2>
+                <canvas id="ratingDistChart"></canvas>
+            </div>
+            <div class="chart-container full-width">
+                <h2>Top 15 Players - Game Statistics</h2>
+                <canvas id="gameStatsChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Leaderboard Section -->
+        <section class="leaderboard-section">
+            <h2>Leaderboard</h2>
+            <div class="table-controls">
+                <input type="text" id="searchInput" placeholder="Search players...">
+                <select id="sortSelect">
+                    <option value="rank">Sort by Final Standing</option>
+                    <option value="rating">Sort by Mu Rating</option>
+                    <option value="winrate">Sort by Win Rate</option>
+                    <option value="games">Sort by Games Played</option>
+                </select>
+                <button id="compareBtn" class="action-btn" disabled>
+                    <span class="btn-icon">⚖️</span> Compare Selected
+                </button>
+                <button id="exportBtn" class="action-btn">
+                    <span class="btn-icon">📥</span> Export Data
+                </button>
+                <button id="themeToggle" class="action-btn">
+                    <span class="btn-icon">🌙</span> <span id="themeText">Dark Mode</span>
+                </button>
+            </div>
+            <div class="feature-controls">
+                <div class="control-group">
+                    <label class="control-label">Highlight:</label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="highlightTop3" checked>
+                        <span>Top 3 Players</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="highlightWinRate">
+                        <span>Win Rate &gt; 80%</span>
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Display:</label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showModel">
+                        <span>Show Model</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showPrompts">
+                        <span>Show Prompts</span>
+                    </label>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Filter:</label>
+                    <select id="winRateFilter">
+                        <option value="all">All Win Rates</option>
+                        <option value="high">≥ 60%</option>
+                        <option value="medium">40-60%</option>
+                        <option value="low">&lt; 40%</option>
+                    </select>
+                    <select id="gamesFilter">
+                        <option value="all">All Games</option>
+                        <option value="full">12 Games</option>
+                        <option value="partial">&lt; 12 Games</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table id="leaderboardTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" title="Select all"></th>
+                            <th>Pin</th>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Rating (μ)</th>
+                            <th>Sigma (σ)</th>
+                            <th>Games</th>
+                            <th>Wins</th>
+                            <th>Draws</th>
+                            <th>Losses</th>
+                            <th>Win Rate</th>
+                            <th class="model-column" style="display: none;">Model</th>
+                            <th class="prompts-column" style="display: none;">Prompts</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Comparison Modal -->
+    <div id="comparisonModal" class="modal">
+        <div class="modal-content comparison-modal">
+            <span class="close" onclick="closeComparisonModal()">&times;</span>
+            <h2>Player Comparison</h2>
+            <div class="comparison-container">
+                <div class="comparison-player" id="comparePlayer1">
+                    <h3 id="comparePlayer1Name">Player 1</h3>
+                    <div class="comparison-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Rank:</span>
+                            <span class="stat-value" id="compare1Rank">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rating (μ):</span>
+                            <span class="stat-value" id="compare1Rating">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sigma (σ):</span>
+                            <span class="stat-value" id="compare1Sigma">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate:</span>
+                            <span class="stat-value" id="compare1WinRate">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Games:</span>
+                            <span class="stat-value" id="compare1Games">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wins:</span>
+                            <span class="stat-value" id="compare1Wins">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Draws:</span>
+                            <span class="stat-value" id="compare1Draws">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Losses:</span>
+                            <span class="stat-value" id="compare1Losses">-</span>
+                        </div>
+                    </div>
+                    <div class="comparison-chart">
+                        <canvas id="compareChart1"></canvas>
+                    </div>
+                    <div class="model-info-box">
+                        <h4>Model Configuration</h4>
+                        <div class="model-detail" id="compare1Model">-</div>
+                    </div>
+                </div>
+                <div class="comparison-divider">
+                    <span class="vs-text">VS</span>
+                </div>
+                <div class="comparison-player" id="comparePlayer2">
+                    <h3 id="comparePlayer2Name">Player 2</h3>
+                    <div class="comparison-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Rank:</span>
+                            <span class="stat-value" id="compare2Rank">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Rating (μ):</span>
+                            <span class="stat-value" id="compare2Rating">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sigma (σ):</span>
+                            <span class="stat-value" id="compare2Sigma">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Win Rate:</span>
+                            <span class="stat-value" id="compare2WinRate">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Games:</span>
+                            <span class="stat-value" id="compare2Games">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Wins:</span>
+                            <span class="stat-value" id="compare2Wins">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Draws:</span>
+                            <span class="stat-value" id="compare2Draws">-</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Losses:</span>
+                            <span class="stat-value" id="compare2Losses">-</span>
+                        </div>
+                    </div>
+                    <div class="comparison-chart">
+                        <canvas id="compareChart2"></canvas>
+                    </div>
+                    <div class="model-info-box">
+                        <h4>Model Configuration</h4>
+                        <div class="model-detail" id="compare2Model">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Detail Modal -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalPlayerName">Player Name</h2>
+            <div class="player-details">
+                <div class="detail-section" id="modalModelSection" style="display: none;">
+                    <h3>Model Configuration</h3>
+                    <div class="model-info">
+                        <div class="detail-item">
+                            <span class="detail-label">Agent 0:</span>
+                            <span class="detail-value" id="modalAgent0Model">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Agent 1:</span>
+                            <span class="detail-value" id="modalAgent1Model">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3>Statistics</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Rank:</span>
+                            <span class="detail-value" id="modalRank">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Rating (μ):</span>
+                            <span class="detail-value" id="modalRating">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Sigma (σ):</span>
+                            <span class="detail-value" id="modalSigma">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Win Rate:</span>
+                            <span class="detail-value" id="modalWinRate">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-section">
+                    <h3>Game Results</h3>
+                    <div class="result-chart-container">
+                        <canvas id="playerResultChart"></canvas>
+                    </div>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Total Games:</span>
+                            <span class="detail-value" id="modalGames">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Wins:</span>
+                            <span class="detail-value win-color" id="modalWins">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Draws:</span>
+                            <span class="detail-value draw-color" id="modalDraws">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Losses:</span>
+                            <span class="detail-value loss-color" id="modalLosses">-</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-section" id="modalPromptsSection" style="display: none;">
+                    <h3>Prompts</h3>
+                    <div class="prompts-container">
+                        <div class="prompt-box">
+                            <h4>Agent 0 - System Prompt</h4>
+                            <pre id="modalAgent0SystemPrompt" class="prompt-text">-</pre>
+                        </div>
+                        <div class="prompt-box">
+                            <h4>Agent 0 - Step-wise Prompt</h4>
+                            <pre id="modalAgent0StepPrompt" class="prompt-text">-</pre>
+                        </div>
+                        <div class="prompt-box">
+                            <h4>Agent 1 - System Prompt</h4>
+                            <pre id="modalAgent1SystemPrompt" class="prompt-text">-</pre>
+                        </div>
+                        <div class="prompt-box">
+                            <h4>Agent 1 - Step-wise Prompt</h4>
+                            <pre id="modalAgent1StepPrompt" class="prompt-text">-</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Chess Tournament - AI Prompt Engineering Competition</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
