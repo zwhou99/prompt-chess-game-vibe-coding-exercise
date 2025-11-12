@@ -82,9 +82,7 @@ body.dark-theme .player-name {
 }
 
 body.dark-theme .rank-badge {
-    color: #000000;
-    font-weight: 700;
-    text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
+    color: #eaeaea;
 }
 
 body.dark-theme .rank-1,
@@ -92,6 +90,7 @@ body.dark-theme .rank-2,
 body.dark-theme .rank-3 {
     color: #000000;
     font-weight: 800;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
 body.dark-theme .modal-content {
