@@ -98,9 +98,42 @@ body.dark-theme .modal-content {
     color: var(--text-dark);
 }
 
+body.dark-theme #modalPlayerName {
+    color: #5dade2;
+}
+
+body.dark-theme .detail-section h3 {
+    color: #5dade2;
+}
+
+body.dark-theme .detail-label {
+    color: #a0a0a0;
+}
+
+body.dark-theme .detail-value {
+    color: #eaeaea;
+}
+
 body.dark-theme .prompt-text {
     background: var(--secondary-color);
     color: var(--text-dark);
+}
+
+body.dark-theme .prompt-box h4 {
+    color: #5dade2;
+}
+
+body.dark-theme .prompt-box {
+    background: var(--secondary-color);
+    border-left-color: #5dade2;
+}
+
+body.dark-theme .model-info-box h4 {
+    color: #5dade2;
+}
+
+body.dark-theme .model-detail {
+    color: #eaeaea;
 }
 
 body.dark-theme .feature-controls {
@@ -130,6 +163,30 @@ body.dark-theme tbody tr.pinned-row {
 
 body.dark-theme .comparison-player h3 {
     color: #5dade2;
+}
+
+body.dark-theme .stat-item {
+    background: var(--secondary-color);
+}
+
+body.dark-theme .stat-item .stat-label {
+    color: #a0a0a0;
+}
+
+body.dark-theme .stat-item .stat-value {
+    color: #eaeaea;
+}
+
+body.dark-theme .comparison-player {
+    background: var(--secondary-color);
+}
+
+body.dark-theme .model-info-box {
+    background: var(--hover-color);
+}
+
+body.dark-theme .detail-item {
+    background: var(--secondary-color);
 }
 
 body {
